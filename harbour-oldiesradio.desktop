@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Icon=harbour-oldiesradio
+Exec=harbour-oldiesradio
+Name=Czech radio
+# translation:
+Name[ru]=Радио Чехии
