@@ -1,5 +1,8 @@
 import QtQuick 2.6
 import Sailfish.Silica 1.0
+import QtQuick.XmlListModel 2.0
+
+import "../pages/Utils.js" as Utils
 
 Item {
     id: playerControl
@@ -45,7 +48,7 @@ Item {
                     setURLforTheFirstTime = false
 //                    radioPlayer.source = streamsURL.get(0).url
                     radioPlayer.source = streamsURL[0].url
-                    streamsView.currentIndex = 0
+//                    streamsView.currentIndex = 0
                 }
             }
         }
@@ -53,8 +56,8 @@ Item {
 
     Image {
         id: currentRadioLogo
-        height: !showFullControl?175 * Theme.pixelRatio:0
-        width: !showFullControl?175 * Theme.pixelRatio:0
+        height: 200 * Theme.pixelRatio
+        width: 200 * Theme.pixelRatio
         fillMode: Image.PreserveAspectFit
         source: radioLogo
         onStatusChanged: {
@@ -71,18 +74,36 @@ Item {
     Label {
         id: currentStationName
         anchors.left: currentRadioLogo.right
-        anchors.leftMargin: 5 * Theme.pixelRatio
+        anchors.leftMargin: Theme.horizontalPageMargin
         anchors.right: parent.right
-        anchors.rightMargin: 5 * Theme.pixelRatio
+        anchors.rightMargin: Theme.horizontalPageMargin
         anchors.top: currentRadioLogo.top
         font.pixelSize: Theme.fontSizeExtraSmall
         text:  radioTitle
+    }
+    Text {
+        id: artistTitle
+        anchors.left: currentStationName.left
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.horizontalPageMargin
+        anchors.top: currentStationName.bottom
+        anchors.topMargin: Theme.paddingSmall
+        font.pixelSize: Theme.fontSizeExtraSmall
+    }
+    Text {
+        id: songTitle
+        anchors.left: currentStationName.left
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.horizontalPageMargin
+        anchors.top: artistTitle.bottom
+        anchors.topMargin: Theme.paddingSmall
+        font.pixelSize: Theme.fontSizeExtraSmall
     }
 
     IconButton {
         id: playButton
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: !showFullControl?Theme.paddingLarge:0
+        anchors.horizontalCenterOffset: Theme.paddingLarge
 //        anchors.verticalCenter: parent.verticalCenter
 //        anchors.verticalCenterOffset: 20 * Theme.pixelRatio
         anchors.bottom: parent.bottom

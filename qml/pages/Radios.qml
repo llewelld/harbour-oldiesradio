@@ -2,6 +2,7 @@ import QtQuick 2.6
 import Sailfish.Silica 1.0
 
 import "Utils.js" as Utils
+import "../components"
 
 Page {
     id: page
@@ -34,14 +35,14 @@ Page {
                     for (var j in radios) {
                         if (radios[j].streams !== undefined) {
                             var streams = radios[j].streams
-                            stations.append({
-                                                "categoryTitle": raw[i].title,
-                                                "radioTitle": Utils.replaceEntity(radios[j].name),
-                                                "radioLogoImage": radios[j].logo,
-                                                "radioDescription": Utils.replaceEntity(radios[j].description),
-                                                "streamInfo": radios[j].artwork,
-                                                "radioStream": streams
-                                            })
+//                            stations.append({
+//                                                "categoryTitle": raw[i].title,
+//                                                "radioTitle": Utils.replaceEntity(radios[j].name),
+//                                                "radioLogoImage": radios[j].logo,
+//                                                "radioDescription": Utils.replaceEntity(radios[j].description),
+//                                                "streamInfo": radios[j].artwork,
+//                                                "radioStream": streams
+//                                            })
                             dict.push({
                                           "categoryTitle": raw[i].title,
                                           "radioTitle": Utils.replaceEntity(radios[j].name),
@@ -66,49 +67,45 @@ Page {
         //        xmlListModel.reload()
     }
 
-    // To enable PullDownMenu, place our content in a SilicaFlickable
-    SilicaFlickable {
+    Drawer {
+        id: drawer
+
         anchors.fill: parent
+        dock: Dock.Bottom
+        open: radioPlayer.source != ""?true:false
 
-        contentHeight: column.height + Theme.paddingLarge
-        // PullDownMenu and PushUpMenu must be declared in SilicaFlickable, SilicaListView or SilicaGridView
-        //        PullDownMenu {
-        //            MenuItem {
-        //                text: qsTr("Settings")
-        //                onClicked: pageStack.push(Qt.resolvedUrl("SecondPage.qml"))
-        //            }
-        //        }
-
-        Column {
-            id: column
-            spacing: Theme.paddingLarge
-            width: parent.width
-            PageHeader { title: "Radio categories" }
-            ExpandingSectionGroup {
-                currentIndex: 0
-                Repeater {
-
-                    model: category
-
-                    ExpandingSection {
-                        title: category.get(index).categoryTitle
+        background: PlayerItem {
+            id: playerItem
+            anchors.fill: parent
+        }
+        backgroundSize: 220 * Theme.pixelRatio
+        SilicaListView {
+            id: radioView
+            anchors.fill: parent
+            header: PageHeader { title: qsTr("Radio categories") }
+            model: category
+            delegate:  ExpandingSection {
+                        title: categoryTitle
                         property variant dataArr: JSON.parse(category.get(index).dict)
 
-                        content.sourceComponent: Column {
-
-                            Repeater {
+                        content.sourceComponent: SilicaListView {
                                 id: repeater
 
+                                height: Theme.itemSizeMedium * dataArr.length
+                                spacing: Theme.paddingSmall
+                                clip: true
+                                highlight: Rectangle {
+                                    color: "#b1b1b1"
+                                    opacity: 0.3
+                                }
                                 model: dataArr.length
-                                Column {
-                                    width: parent.width
-                                    ListItem {
+                                delegate: ListItem {
                                         height: Theme.itemSizeMedium
                                         contentHeight: Theme.itemSizeMedium
                                         width: parent.width
                                         Image {
                                             id: logo
-                                            //                        height: parent.height * 0.9
+
                                             anchors.left: parent.left
                                             anchors.leftMargin: Theme.paddingLarge
                                             anchors.verticalCenter: parent.verticalCenter
@@ -121,7 +118,8 @@ Page {
                                             anchors.leftMargin: Theme.paddingLarge
                                             anchors.right: parent.right
                                             anchors.rightMargin: Theme.paddingLarge
-                                            anchors.top: logo.top
+                                            anchors.top: parent.top
+                                            anchors.topMargin: Theme.paddingSmall
                                             text: dataArr[index].radioTitle
                                             truncationMode: TruncationMode.Fade
                                         }
@@ -137,21 +135,18 @@ Page {
                                         }
 
                                         onClicked: {
-                                            console.log(JSON.stringify(dataArr[index].radioStream))
-                                            pageStack.push(Qt.resolvedUrl("PlayerPage.qml"), {
-                                                               "streamInfo": dataArr[index].streamInfo,
-                                                               "streamsURL": dataArr[index].radioStream,
-                                                               "radioTitle": dataArr[index].radioTitle,
-                                                               "radioLogo": dataArr[index].radioLogoImage
-                                                           })
+                                            console.log(JSON.stringify(dataArr[index]))
+                                            playerItem.streamInfo = dataArr[index].streamInfo
+                                            playerItem.streamsURL = dataArr[index].radioStream
+                                            playerItem.radioTitle = dataArr[index].radioTitle
+                                            playerItem.radioLogo = dataArr[index].radioLogoImage
                                         }
                                     }
                                 }
                             }
-                        }
-                    }
-                }
-            }
+            spacing: Theme.paddingSmall
+            clip: true
+            currentIndex: 0
         }
     }
 }
