@@ -18,6 +18,10 @@ Page {
         id: category
     }
 
+    Database {
+        id: database
+    }
+
     BusyIndicator {
         id: busyIndicator
         anchors.centerIn: parent
@@ -63,8 +67,31 @@ Page {
     }
 
     Component.onCompleted: {
+        database.initDatabase()
+        var f = database.getFavorites()
+        console.log("Fav", JSON.stringify(f))
+        var dict = []
+        dict.push({
+                      "categoryTitle": "My favorites",
+                      "radioTitle": "Rádia Anténa Rock",
+                      "radioLogoImage": "http://antenarock.sk/templates/img/antena-live.jpg",
+                      "radioDescription": "Live vysielanie Rádia Anténa Rock",
+                      "streamInfo": "",
+                      "radioStream": "http://stream.antenarock.sk/antena-hi.mp3"
+                  })
+        for (var i in f) {
+            dict.push({
+                          "categoryTitle": "My favorites",
+                          "radioTitle": f[i].title,
+                          "radioLogoImage": "../harbour-oldiesradio.png",
+                          "radioDescription": f[i].description,
+                          "streamInfo": "",
+                          "radioStream": f[i].stream
+                      })
+        }
+
+        category.append({"categoryTitle": "My favorites", "dict": JSON.stringify(dict)})
         Utils.sendHttpRequest("GET", stationsURL, fillData)
-        //        xmlListModel.reload()
     }
 
     Drawer {
@@ -82,6 +109,25 @@ Page {
         SilicaListView {
             id: radioView
             anchors.fill: parent
+
+            PullDownMenu {
+                MenuItem {
+                    text: "About"
+                    onClicked: {
+                        console.log("Clicked option 1")
+                        pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
+                    }
+                }
+                MenuItem {
+                    text: "Manage favorires"
+                    onClicked: {
+                        console.log("Clicked option 2")
+                        pageStack.push(Qt.resolvedUrl("ManageFavorites.qml"))
+                    }
+                }
+            }
+
+
             header: PageHeader { title: qsTr("Radio categories") }
             model: category
             delegate:  ExpandingSection {
@@ -89,61 +135,27 @@ Page {
                         property variant dataArr: JSON.parse(category.get(index).dict)
 
                         content.sourceComponent: SilicaListView {
-                                id: repeater
+                            id: repeater
 
-                                height: Theme.itemSizeMedium * dataArr.length
-                                spacing: Theme.paddingSmall
-                                clip: true
-                                highlight: Rectangle {
-                                    color: "#b1b1b1"
-                                    opacity: 0.3
-                                }
-                                model: dataArr.length
-                                delegate: ListItem {
-                                        height: Theme.itemSizeMedium
-                                        contentHeight: Theme.itemSizeMedium
-                                        width: parent.width
-                                        Image {
-                                            id: logo
+                            height: Theme.itemSizeMedium * dataArr.length
+                            spacing: Theme.paddingSmall
+                            clip: true
+                            model: dataArr.length
+                            delegate: StationDelegate {
+                                radioLogo: dataArr[index].radioLogoImage
+                                radioTitle: dataArr[index].radioTitle
+                                radioDescription: dataArr[index].radioDescription
 
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: Theme.paddingLarge
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            source: dataArr[index].radioLogoImage
-                                            fillMode: Image.PreserveAspectFit
-                                        }
-                                        Label {
-                                            id: title
-                                            anchors.left: logo.right
-                                            anchors.leftMargin: Theme.paddingLarge
-                                            anchors.right: parent.right
-                                            anchors.rightMargin: Theme.paddingLarge
-                                            anchors.top: parent.top
-                                            anchors.topMargin: Theme.paddingSmall
-                                            text: dataArr[index].radioTitle
-                                            truncationMode: TruncationMode.Fade
-                                        }
-                                        Label {
-                                            id: description
-                                            anchors.left: logo.right
-                                            anchors.leftMargin: Theme.paddingLarge
-                                            anchors.right: parent.right
-                                            anchors.rightMargin: Theme.paddingLarge
-                                            anchors.top: title.bottom
-                                            text: dataArr[index].radioDescription
-                                            truncationMode: TruncationMode.Fade
-                                        }
-
-                                        onClicked: {
-                                            console.log(JSON.stringify(dataArr[index]))
-                                            playerItem.streamInfo = dataArr[index].streamInfo
-                                            playerItem.streamsURL = dataArr[index].radioStream
-                                            playerItem.radioTitle = dataArr[index].radioTitle
-                                            playerItem.radioLogo = dataArr[index].radioLogoImage
-                                        }
-                                    }
+                                onClicked: {
+                                    console.log(JSON.stringify(dataArr[index]))
+                                    playerItem.streamsURL = dataArr[index].radioStream
+                                    playerItem.radioTitle = dataArr[index].radioTitle
+                                    playerItem.radioLogo = dataArr[index].radioLogoImage
+                                    playerItem.streamInfo = typeof dataArr[index].streamInfo === "object"?"":dataArr[index].streamInfo
                                 }
                             }
+                        }
+            }
             spacing: Theme.paddingSmall
             clip: true
             currentIndex: 0

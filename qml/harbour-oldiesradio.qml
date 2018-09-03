@@ -26,7 +26,7 @@ ApplicationWindow
     Audio {
         id: radioPlayer
         source: ""
-        autoLoad: false
+        autoLoad: true
         autoPlay: false
         onError: {
             console.log("Error happened", radioPlayer.errorString, "error num", radioPlayer.error)
@@ -36,6 +36,11 @@ ApplicationWindow
         }
         onStopped: {
             playRadio = false
+        }
+        onSourceChanged: {
+            if(source != "") {
+                play()
+            }
         }
     }
 

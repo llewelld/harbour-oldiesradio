@@ -38,7 +38,9 @@ SAILFISHAPP_ICONS = 86x86 108x108 128x128 256x256
 
 DISTFILES += \
     qml/pages/Utils.js \
-    qml/pages/PlayerPage.qml \
     qml/pages/Radios.qml \
-    qml/pages/Database.qml\
-    qml/components/PlayerItem.qml
+    qml/components/Database.qml\
+    qml/components/PlayerItem.qml \
+    qml/pages/AboutPage.qml \
+    qml/pages/ManageFavorites.qml \
+    qml/components/StationDelegate.qml
