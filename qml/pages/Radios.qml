@@ -7,7 +7,7 @@ import "../components"
 Page {
     id: page
 
-    property string baseURL: "http://www.abradio.cz"
+    property string baseURL: "https://radia.cz"
     property string stationsURL: baseURL + "/data/s/stations.json"
 
     ListModel {
@@ -50,7 +50,7 @@ Page {
                             dict.push({
                                           "categoryTitle": raw[i].title,
                                           "radioTitle": Utils.replaceEntity(radios[j].name),
-                                          "radioLogoImage": radios[j].logo,
+                                          "radioLogoImage": Utils.changeImageLink(radios[j].logo),
                                           "radioDescription": Utils.replaceEntity(radios[j].description),
                                           "streamInfo": radios[j].artwork,
                                           "radioStream": streams

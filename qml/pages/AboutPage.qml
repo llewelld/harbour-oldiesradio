@@ -20,7 +20,7 @@ Page {
             width: parent.width
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignJustify
-            text: "<a href='http://www.abradio.cz'>Abradio</a> - Czech Republic - Listen to free internet radio, sports, music, news, talk and podcasts."
+            text: "<a href='http://www.radia.cz'>Radia</a> - Czech Republic - Listen to free internet radio, sports, music, news, talk and podcasts."
 
             onLinkActivated: {
                 Qt.openUrlExternally(link)
